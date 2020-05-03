@@ -14,7 +14,7 @@ function showClock(clock) {
     clock.separator +
     clock.seconds.toString().padStart(2, '0')
   );
-  
+
   const relevantClock = clocks.find(elem => {
     return elem.classList.contains(clock.type);
   });
@@ -29,11 +29,13 @@ function timerIsUp(clock) {
 function pausePomodoro() {
   state = 'paused';
   clearInterval(clockUpdateInterval);
+  clearInterval(progressBarUpdateInterval);
 }
 
 function resetClock(clock) {
 
   clearInterval(clockUpdateInterval);
+  clearInterval(progressBarUpdateInterval);
   clock = {};
 }
 function stopPomodoro() {
@@ -42,18 +44,13 @@ function stopPomodoro() {
 }
 
 function start(clock) {
-  function getTime(clock) {
-    return clock.minutes * 60 * 1000 + clock.seconds * 1000;
-  }
-  const totalTime = getTime(clock);
   clockUpdateInterval = setInterval(updateClock, 1000);
   const refreshRate = 100;
   progressBarUpdateInterval = setInterval(updateProgressBar, refreshRate);
-  let timeElapsed = 0; 
   function updateProgressBar() {
     timeElapsed += refreshRate;
-    const currentTimeRemaining = totalTime - timeElapsed; 
-    const progressBarWidth = `${(totalTime - currentTimeRemaining) / totalTime * 100}%`;
+    const currentTimeRemaining = clock.totalTime - timeElapsed;
+    const progressBarWidth = `${(clock.totalTime - currentTimeRemaining) / clock.totalTime * 100}%`;
     progressBar.style.width = progressBarWidth;
   }
   function decreaseMinute() {
@@ -71,6 +68,7 @@ function start(clock) {
       clearInterval(clockUpdateInterval);
       progressBar.style.width = '0px';
       clearInterval(progressBarUpdateInterval);
+      timeElapsed = 0;
       if (clock.type === 'focus') {
         updateSessions(++sessions);
         return;
@@ -82,13 +80,6 @@ function start(clock) {
 
 function startPomodoro() {
   state = 'running';
-  const time = 1;
-  const clock = {
-    minutes: time,
-    separator: ':',
-    seconds: 0,
-    type: 'focus'
-  }
   start(clock);
 
 }
@@ -100,6 +91,9 @@ function startBreak() {
     seconds: 0,
     type: 'break'
   }
+  time = clock.minutes;
+  totalTime = clock.minutes * 60 * 1000;
+  timeElapsed = 0;
   start(clock);
 }
 
@@ -110,6 +104,12 @@ function startLongBreak() {
     seconds: 0,
     type: 'break'
   }
+  clock.minutes = 15;
+  clock.seconds = 0;
+  type = 'break';
+  time = clock.minutes;
+  totalTime = clock.minutes * 60 * 1000;
+  timeElapsed = 0;
   start(clock);
 }
 
@@ -121,6 +121,17 @@ const progressBar = document.querySelector('.progress-bar');
 let clockUpdateInterval = null;
 let state = null;
 let sessions = 3;
+let time = 1;
+let timeElapsed = 0;
+
+const clock = {
+  minutes: time,
+  separator: ':',
+  seconds: 0,
+  type: 'focus',
+  totalTime: time * 60 * 1000
+};
+
 controls.addEventListener('click', event => {
   if (event.target.className === 'start') {
     if (state !== 'running') {
