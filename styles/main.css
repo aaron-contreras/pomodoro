@@ -5,6 +5,35 @@
 }
 body {
   font-family: 'Jost', sans-serif;
+  font-size: 24px;
   color: white;
   background-color: var(--main-background);
+}
+
+main {
+  margin: 0 auto;
+}
+.controls button{
+  border-radius: 5px;
+  padding: 5px 20px;
+}
+
+.progress-bar {
+  position: relative;
+  height: 20px;
+  width: 0px;
+  background-color: var(--main-highlight);
+  transition: 1s;
+}
+.progress-bar::after {
+  position: absolute;
+  right: 0;
+  top: 0;
+  content: '';
+  width: 3px;
+  height: 20px;
+  background-color: white;
+  -webkit-box-shadow: 0px 0px 3px 2px white;
+  -moz-box-shadow: 0px 0px 3px 2px white;
+  box-shadow: 0px 0px 3px 2px white;
 }
