@@ -1,20 +1,31 @@
-function convertMinutesToMs(minutes) {
-  return minutes * 60 * 1000;
-}
-function getFocusTimeInMilliseconds() {
-  const duration = prompt('How long would you like your session to last');
-  return convertMinutesToMs(duration);
+function showClock(clock) {
+  return clock.minutes + clock.separator + clock.seconds.padEnd(2, '0');
 }
 
+function timerIsUp(clock) {
+  return clock.minutes === 0 && clock.seconds === 0;
+}
 function startPomodoro() {
-  const time = getFocusTimeInMilliseconds();
-  let timeRemaining = time;
-  const countdownFunction = setInterval(countdown, 1000);
-  function countdown() {
-    console.log(timeRemaining);
-    timeRemaining -= 1000;
-    if (timeRemaining < 0) {
-      clearInterval(countdownFunction);
+  const time = prompt('How many minutes of focus?');
+  const clock = {
+    minutes: time,
+    separator: ':',
+    seconds: '0'
+  }
+  const countdown = setInterval(decreaseSecond, 1000);
+  function decreaseMinute(clock) {
+    clock.minutes--;
+    clock.seconds = '59';
+  }
+
+  function decreaseSecond() {
+    clock.seconds = (clock.seconds - 1).toString();
+    if (clock.seconds < 0) {
+      decreaseMinute(clock);
+    }
+    console.log(showClock(clock));
+    if (timerIsUp(clock)) {
+      clearInterval(countdown);
     }
   }
   
