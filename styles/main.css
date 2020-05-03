@@ -1,0 +1,10 @@
+:root {
+  --main-background: #1A1423;
+  --main-highlight: #99EDCC;
+  --secondary-highlight: #EB5160;
+}
+body {
+  font-family: 'Jost', sans-serif;
+  color: white;
+  background-color: var(--main-background);
+}
