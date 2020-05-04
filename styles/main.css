@@ -20,6 +20,19 @@ body {
   background-color: var(--main-background);
 }
 
+.flash {
+  animation-name: flash;
+  animation-duration: 0.5s;
+  animation-iteration-count: 2;
+}
+@keyframes flash {
+  30% {
+    transform: translateY(15px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
 a {
   text-decoration: none;
   color: var(--secondary-background);
@@ -42,10 +55,8 @@ main {
 h1 {
   padding: 10px 0;
   text-transform: uppercase;
-  /* background-color: var(--secondary-highlight); */
   background-color: var(--main-highlight);
   color: var(--secondary-background);
-  /* color: white; */
 }
 
 header p {
@@ -134,7 +145,6 @@ button:hover {
 
 .selected-mode {
   color: var(--secondary-background);
-  /* color: white; */
   background-color: var(--main-highlight);
 }
 

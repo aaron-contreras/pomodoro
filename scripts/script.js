@@ -1,4 +1,16 @@
 function updateSessions(sessionNum) {
+  if (sessionNum === 0) {
+    while (session.firstChild) {
+      if (session.lastChild.nodeName === 'H3') {
+        break;
+      }
+      session.removeChild(session.lastChild);
+    }
+    const para = document.createElement('p');
+    para.textContent = '0';
+    session.appendChild(para);
+    return;
+  }
   if ([...session.children].some(child => child.nodeName === 'P')) {
     session.removeChild(session.firstElementChild.nextElementSibling);
   }
@@ -26,8 +38,8 @@ function timerIsUp(clock) {
 }
 
 function clearIntervals() {
-  clearInterval(clockUpdateInterval);
-  clearInterval(progressBarUpdateInterval);
+    clearInterval(clockUpdateInterval);
+    clearInterval(progressBarUpdateInterval);
 }
 
 function resetProgressBar() {
@@ -96,16 +108,6 @@ function resetClock(minutes, type) {
   timeElapsed = 0;
 }
 
-function toggleFocusSelection() {
-  modeButtons.forEach(button => {
-    if (button.getAttribute('disabled')) {
-      button.removeAttribute('disabled');
-    } else {
-      button.setAttribute('disabled', 'true');
-    }
-  });
-}
-
 function removeFocusSelection() {
   modeButtons.forEach(button => {
     button.setAttribute('disabled', 'true');
@@ -134,8 +136,6 @@ function stopPomodoro() {
   resetClock(mode.focus, 'focus');
   resetProgressBar();
   showClock();
-  toggleFocusSelection();
-  enableFocusSelection();
   running = false;
 }
 
@@ -212,6 +212,8 @@ let sessions = 0;
 let time = 1;
 let timeElapsed = 0;
 const refreshRate = 100;
+let clockUpdateInterval = null;
+let progressBarUpdateInterval = null;
 const clock = {
   minutes: null,
   separator: ':',
@@ -220,6 +222,14 @@ const clock = {
   totalTime: null
 };
 resetClock(mode.focus, 'focus');
+function clearAll() {
+  stopPomodoro();
+  enableFocusSelection();
+  updateSessions(sessions = 0);
+  modeButtons.forEach(button => {
+    button.classList.remove('selected-mode');
+  });
+}
 controls.addEventListener('click', event => {
   console.log(event);
   if (event.target.className.includes('play')) {
@@ -230,5 +240,7 @@ controls.addEventListener('click', event => {
     pausePomodoro();
   } else if (event.target.className.includes('stop')) {
     stopPomodoro();
+  } else if (event.target.className.includes('trash')) {
+    clearAll();
   }
 });
