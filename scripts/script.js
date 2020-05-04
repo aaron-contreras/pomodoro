@@ -7,19 +7,14 @@ function updateSessions(sessionNum) {
   }
 }
 
-function showClock(clock) {
+function showClock() {
   const timeRemaining = (
     clock.minutes.toString().padStart(2, '0') +
     clock.separator +
     clock.seconds.toString().padStart(2, '0')
   );
 
-  const relevantClock = clocks.find(elem => {
-    return elem.classList.contains(clock.type);
-  });
-
-  relevantClock.textContent = timeRemaining;
-  return timeRemaining;
+  clockDisplay.textContent = timeRemaining;
 }
 
 function timerIsUp(clock) {
@@ -34,14 +29,14 @@ function clearIntervals() {
 function resetProgressBar() {
   clearInterval(clockUpdateInterval);
   clearInterval(progressBarUpdateInterval);
+  progressBar.style.transitionDuration = '1s';
   progressBar.style.width = '0px';
 }
 
 function updateProgressBar() {
   timeElapsed += refreshRate;
-  const currentTimeRemaining = clock.totalTime - timeElapsed;
-  const progressBarWidth = `${(clock.totalTime - currentTimeRemaining) / clock.totalTime * 100}%`;
-  progressBar.style.width = progressBarWidth;
+  const progressBarWidth = `${timeElapsed / clock.totalTime * 100}`;
+  progressBar.style.width = progressBarWidth + '%';
 }
 
 function start() {
@@ -58,8 +53,9 @@ function start() {
     if (clock.seconds < 0) {
       decreaseMinute();
     }
-    console.log(showClock(clock));
+    showClock(clock);
     if (timerIsUp(clock)) {
+      shotclock.play();
       resetProgressBar();
       if (clock.type === 'focus') {
         updateSessions(++sessions);
@@ -101,20 +97,23 @@ function pausePomodoro() {
 
 function stopPomodoro() {
   clearIntervals();
-  resetClock(1, 'focus');
+  resetClock(mode.focus, 'focus');
+  resetProgressBar();
+  showClock();
   toggleFocusSelection();
   running = false;
 }
 
 function startBreak() {
-  resetClock(5, 'break');
+  resetClock(mode.break, 'break');
   start();
 }
 
 function startLongBreak() {
-  resetClock(15, 'break');
+  resetClock(mode.longBreak, 'break');
   start();
 }
+
 const modes = {
   short: {
     focus: 25,
@@ -133,12 +132,13 @@ function getMode(event) {
     modes.short :
     modes.long;
 }
-const clocks = [...document.querySelectorAll('.clock')];
+const clockDisplay = document.querySelector('.clock');
 const controls = document.querySelector('.controls');
 const session = document.querySelector('.sessions p');
 const progressBar = document.querySelector('.progress-bar');
 const timeSelections = document.querySelector('.focus-time-selection');
 const modeButtons = [...timeSelections.children];
+const shotclock = document.querySelector('audio');
 timeSelections.firstElementChild.classList.add('selected-mode');
 timeSelections.addEventListener('click', event => {
   if (event.target.nodeName === 'BUTTON') {
@@ -149,32 +149,34 @@ timeSelections.addEventListener('click', event => {
         button.classList.remove('selected-mode');
       }
     });
+
+    resetClock(mode.focus, 'focus');
+    showClock();
   }
-  console.log(mode);
 });
-let mode = null;
+let mode = modes.short;
 let running = false;
 let sessions = session.textContent;
 let time = 1;
 let timeElapsed = 0;
 const refreshRate = 100;
 const clock = {
-  minutes: time,
+  minutes: null,
   separator: ':',
   seconds: 0,
   type: 'focus',
-  totalTime: time * 60 * 1000
+  totalTime: null
 };
+resetClock(1, 'focus');
 controls.addEventListener('click', event => {
-  if (event.target.className === 'start') {
+  console.log(event);
+  if (event.target.className.includes('play')) {
     if (!running) {
       startPomodoro();
     }
-  } else if (event.target.className === 'pause') {
+  } else if (event.target.className.includes('pause')) {
     pausePomodoro();
-  } else if (event.target.className === 'stop') {
+  } else if (event.target.className.includes('stop')) {
     stopPomodoro();
   }
 });
-
-startPomodoro();

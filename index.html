@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://kit.fontawesome.com/b4937b662a.js" crossorigin="anonymous"></script>
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;800&display=swap" rel="stylesheet" />
   <link href="./styles/normalize.css" rel="stylesheet" />
   <link href="./styles/main.css" rel="stylesheet" />
@@ -11,30 +12,41 @@
 </head>
 
 <body>
+  <header>
+    <h1>Pomodoro</h1>
+  </header>
   <div class="progress-bar"></div>
   <main>
     <p>Focus time</p>
-    <h1 class="clock focus">25:00</h1>
-    <p>Break time</p>
-    <h1 class="clock break">5:00</h1>
-    <div class="controls">
-      <button class="start">Start</button>
-      <button class="pause">Pause</button>
-      <button class="stop">Stop</button>
-    </div>
-    <div class="focus-time-selection">
-      <button data-duration="25" class="period">25 min</button>
-      <button data-duration="50" class="period">50 min</button>
+    <div class="timer">
+      <h2 class="clock focus">25:00</h1>
+        <div class="controls">
+          <button class="play"><i class="fas fa-play"></i></button>
+          <button class="pause"><i class="fas fa-pause"></i></button>
+          <button class="stop"><i class="fas fa-stop"></i></button>
+        </div>
+        <div class="focus-time-selection">
+          <button data-duration="25" class="period">25 min</button>
+          <button data-duration="50" class="period">50 min</button>
+        </div>
     </div>
     <div class="details">
-      
-    </div>
-    <div class="sessions">
-      <h2>Sessions</h2>
-      <p>0</p>
+      <div class="pomodoro-settings">
+        <p>Session</p>
+        <p>Break</p>
+        <p>Long break</p>
+      </div>
+      <div class="sessions">
+        <h3>Sessions</h2>
+          <p>0</p>
+          <img src="img/tomato.png" alt="tomato" />
+      </div>
     </div>
   </main>
-
+  <footer>
+    <a href="https://github.com/aaron-contreras">Built by Aaron Contreras <i class="fab fa-github"></i></a>
+  </footer>
+  <audio src="./sounds/shot-clock.wav"></audio>
   <script src="./scripts/script.js"></script>
 </body>
 
