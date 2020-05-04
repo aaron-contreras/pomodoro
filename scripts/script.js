@@ -35,7 +35,7 @@ function resetProgressBar() {
 
 function updateProgressBar() {
   timeElapsed += refreshRate;
-  const progressBarWidth = `${timeElapsed / clock.totalTime * 100}`;
+  const progressBarWidth = `${timeElapsed / (clock.totalTime - 1000) * 100}`;
   progressBar.style.width = progressBarWidth + '%';
 }
 

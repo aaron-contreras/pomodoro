@@ -7,18 +7,35 @@
   --secondary-background-darker: #2a3344;
 }
 body {
-  font-family: 'Jost', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* font-family: 'Jost', sans-serif; */
+  /* font-family: 'Space Mono', monospace; */
+  font-family: 'Fira Code', monospace;
   font-size: 24px;
   color: white;
   background-color: var(--main-background);
   height: 100vh;
 }
 
-header {
-  padding: 10px 0;
-  background-color: var(--secondary-highlight);
+a {
+  text-decoration: none;
+  color: var(--secondary-background);
 }
 
+header {
+  position: relative;
+}
+
+main {
+  text-align: center;
+}
+
+h1 {
+  padding: 20px 0;
+  background-color: var(--secondary-highlight);
+}
 h1, h2 {
   margin: 0;
   text-align: center;
@@ -107,5 +124,9 @@ img {
 }
 
 footer {
+  height: 50px;
+  padding-left: 15px;
+  display: flex;
+  align-items: center;
   background-color: var(--main-highlight);
 }
