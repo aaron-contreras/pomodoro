@@ -54,11 +54,12 @@ let transitionDuration = 1;
 function updateProgressBar() {
   timeElapsed += refreshRate;
   const difference = clock.totalTime - (clock.minutes * 60 * 1000 + clock.seconds * 1000);
+
   // Update the progress bar if tab becomes inactive
   if (timeElapsed < difference) timeElapsed = difference;
+
   if (progressBar.style.transition &&
     timeElapsed > clock.totalTime * 0.1 && transitionDuration > 0) {
-    console.log('in');
     transitionDuration -= 0.01;
     if (transitionDuration < 0.01) {
       transitionDuration = 0;
@@ -208,7 +209,6 @@ function updatePomodoroSettings(timeValue = null) {
 const pomodoroSettings = document.querySelectorAll('.pomodoro-settings p');
 const tomato = document.createElement('img');
 tomato.setAttribute('src', "https://img.icons8.com/plasticine/100/000000/tomato.png");
-console.log(pomodoroSettings);
 let mode = modes.short;
 updatePomodoroSettings();
 let running = false;
@@ -242,7 +242,6 @@ function disableControls() {
   })
 }
 controls.addEventListener('click', event => {
-  console.log(event);
   if (event.target.className.includes('play')) {
     if (!running) {
       startPomodoro();
