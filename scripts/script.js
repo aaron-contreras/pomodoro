@@ -151,7 +151,7 @@ function startLongBreak() {
 
 const modes = {
   short: {
-    focus: 1,
+    focus: 25,
     break: 5,
     longBreak: 15
   },
@@ -186,17 +186,21 @@ timeSelections.addEventListener('click', event => {
         button.classList.remove('selected-mode');
       }
     });
-
+    [...controls.children].forEach(button => {
+      button.removeAttribute('disabled');
+    });
     resetClock(mode.focus, 'focus');
     showClock();
   }
 });
 const settings = ['Focus', 'Break', 'Long break'];
-function updatePomodoroSettings() {
+function updatePomodoroSettings(timeValue = null) {
   let index = 0;
   for (let key in mode) {
     pomodoroSettings[index].textContent = (
-      `${settings[index]}: ${mode[key]} min`
+      `${settings[index]}: ${!timeValue ?
+        mode[key] :
+        timeValue} min`
     );
     index++;
   }
@@ -226,9 +230,16 @@ function clearAll() {
   stopPomodoro();
   enableFocusSelection();
   updateSessions(sessions = 0);
+  updatePomodoroSettings('-');
   modeButtons.forEach(button => {
     button.classList.remove('selected-mode');
   });
+}
+
+function disableControls() {
+  [...controls.children].forEach(button => {
+    button.setAttribute('disabled', 'true');
+  })
 }
 controls.addEventListener('click', event => {
   console.log(event);
@@ -241,6 +252,7 @@ controls.addEventListener('click', event => {
   } else if (event.target.className.includes('stop')) {
     stopPomodoro();
   } else if (event.target.className.includes('trash')) {
+    disableControls();
     clearAll();
   }
 });
