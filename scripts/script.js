@@ -1,10 +1,14 @@
 function updateSessions(sessionNum) {
-  session.textContent = sessionNum;
+  if ([...session.children].some(child => child.nodeName === 'P')) {
+    session.removeChild(session.firstElementChild.nextElementSibling);
+  }
+
   if (sessions % 4 !== 0) {
     startBreak();
   } else {
     startLongBreak();
   }
+  session.appendChild(tomato.cloneNode());
 }
 
 function showClock() {
@@ -28,14 +32,21 @@ function clearIntervals() {
 
 function resetProgressBar() {
   clearInterval(clockUpdateInterval);
-  clearInterval(progressBarUpdateInterval);
   progressBar.style.transitionDuration = '1s';
   progressBar.style.width = '0px';
 }
 
+let newTimeElapsed = 0;
 function updateProgressBar() {
   timeElapsed += refreshRate;
-  const progressBarWidth = `${timeElapsed / (clock.totalTime - 1000) * 100}`;
+  console.log(timeElapsed);
+  const difference = clock.totalTime - (clock.minutes * 60 * 1000 + clock.seconds * 1000);
+  console.log('diff: ' + difference);
+  // Update the progress bar if tab becomes inactive
+  if (timeElapsed < difference) {
+    timeElapsed = difference;
+  }
+  const progressBarWidth = `${timeElapsed / (clock.totalTime) * 100}`;
   progressBar.style.width = progressBarWidth + '%';
 }
 
@@ -61,7 +72,7 @@ function start() {
         updateSessions(++sessions);
         return;
       }
-      console.log('Break is over');
+      resetClock(mode.focus, 'focus');
     }
   }
 }
@@ -84,10 +95,23 @@ function toggleFocusSelection() {
     }
   });
 }
+
+function removeFocusSelection() {
+  modeButtons.forEach(button => {
+    button.setAttribute('disabled', 'true');
+  });
+}
+
+function enableFocusSelection() {
+  modeButtons.forEach(button => {
+    button.removeAttribute('disabled');
+  });
+}
+
 function startPomodoro() {
   running = true;
   start();
-  toggleFocusSelection();
+  removeFocusSelection();
 }
 
 function pausePomodoro() {
@@ -101,6 +125,7 @@ function stopPomodoro() {
   resetProgressBar();
   showClock();
   toggleFocusSelection();
+  enableFocusSelection();
   running = false;
 }
 
@@ -116,14 +141,14 @@ function startLongBreak() {
 
 const modes = {
   short: {
-    focus: 25,
-    break: 5,
+    focus: 1,
+    break: 1,
     longBreak: 15
   },
   long: {
     focus: 50,
     break: 10,
-    longBreak: 15
+    longBreak: 30
   }
 };
 
@@ -134,7 +159,7 @@ function getMode(event) {
 }
 const clockDisplay = document.querySelector('.clock');
 const controls = document.querySelector('.controls');
-const session = document.querySelector('.sessions p');
+const session = document.querySelector('.sessions');
 const progressBar = document.querySelector('.progress-bar');
 const timeSelections = document.querySelector('.focus-time-selection');
 const modeButtons = [...timeSelections.children];
@@ -144,6 +169,7 @@ timeSelections.addEventListener('click', event => {
   if (event.target.nodeName === 'BUTTON') {
     modeButtons.forEach(button => {
       mode = getMode(event);
+      updatePomodoroSettings();
       button.classList.add('selected-mode');
       if (button !== event.target) {
         button.classList.remove('selected-mode');
@@ -154,9 +180,26 @@ timeSelections.addEventListener('click', event => {
     showClock();
   }
 });
+const settings = ['Focus', 'Break', 'Long break'];
+function updatePomodoroSettings() {
+  let index = 0;
+
+  for (let key in mode) {
+    pomodoroSettings[index].textContent = (
+      `${settings[index]}: ${mode[key]} min`
+    );
+    index++;
+  }
+}
+const pomodoroSettings = document.querySelectorAll('.pomodoro-settings p');
+const tomato = document.createElement('img');
+tomato.setAttribute('src', "https://img.icons8.com/plasticine/100/000000/tomato.png");
+console.log(pomodoroSettings);
 let mode = modes.short;
+updatePomodoroSettings();
 let running = false;
-let sessions = session.textContent;
+let sessions = 0;
+console.log(sessions);
 let time = 1;
 let timeElapsed = 0;
 const refreshRate = 100;

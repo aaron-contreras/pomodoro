@@ -10,9 +10,14 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  /* font-family: 'Jost', sans-serif; */
+  font-family: 'Jost', sans-serif;
   /* font-family: 'Space Mono', monospace; */
-  font-family: 'Fira Code', monospace;
+  /* font-family: 'Fira Code', monospace; */
+  /* font-family: 'Courier Prime', monospace; */
+  /* font-family: 'Ubuntu Mono', monospace; */
+  /* font-family: 'Overpass Mono', monospace; */
+  /* font-family: 'Inconsolata', monospace; */
+  /* font-family: 'Roboto Mono', monospace; */
   font-size: 24px;
   color: white;
   background-color: var(--main-background);
@@ -33,7 +38,7 @@ main {
 }
 
 h1 {
-  padding: 20px 0;
+  padding: 10px 0;
   background-color: var(--secondary-highlight);
 }
 h1, h2 {
@@ -56,6 +61,7 @@ button{
 button:hover {
   background-color: var(--secondary-background-darker);
 }
+
 .progress-bar {
   position: relative;
   height: 20px;
@@ -121,6 +127,10 @@ button:hover {
 
 img {
   width: 40px;
+}
+
+.tomato-container {
+  display: grid;
 }
 
 footer {
