@@ -47,6 +47,15 @@ h1 {
   color: var(--secondary-background);
   /* color: white; */
 }
+
+header p {
+  margin: 0;
+  background-color: var(--main-highlight);
+  color: var(--secondary-background);
+  padding-bottom: 10px;
+  text-align: center;
+  font-size: 0.75em;
+}
 h1, h2 {
   margin: 0;
   text-align: center;
