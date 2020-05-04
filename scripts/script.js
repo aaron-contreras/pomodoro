@@ -8,7 +8,6 @@ function updateSessions(sessionNum) {
 }
 
 function showClock(clock) {
-
   const timeRemaining = (
     clock.minutes.toString().padStart(2, '0') +
     clock.separator +
@@ -18,6 +17,7 @@ function showClock(clock) {
   const relevantClock = clocks.find(elem => {
     return elem.classList.contains(clock.type);
   });
+
   relevantClock.textContent = timeRemaining;
   return timeRemaining;
 }
@@ -26,33 +26,28 @@ function timerIsUp(clock) {
   return clock.minutes === 0 && clock.seconds === 0;
 }
 
-function pausePomodoro() {
-  state = 'paused';
+function clearIntervals() {
   clearInterval(clockUpdateInterval);
   clearInterval(progressBarUpdateInterval);
 }
 
-function resetClock(clock) {
-
+function resetProgressBar() {
   clearInterval(clockUpdateInterval);
   clearInterval(progressBarUpdateInterval);
-  clock = {};
-}
-function stopPomodoro() {
-  state = null;
-  resetClock();
+  progressBar.style.width = '0px';
 }
 
-function start(clock) {
+function updateProgressBar() {
+  timeElapsed += refreshRate;
+  const currentTimeRemaining = clock.totalTime - timeElapsed;
+  const progressBarWidth = `${(clock.totalTime - currentTimeRemaining) / clock.totalTime * 100}%`;
+  progressBar.style.width = progressBarWidth;
+}
+
+function start() {
   clockUpdateInterval = setInterval(updateClock, 1000);
-  const refreshRate = 100;
   progressBarUpdateInterval = setInterval(updateProgressBar, refreshRate);
-  function updateProgressBar() {
-    timeElapsed += refreshRate;
-    const currentTimeRemaining = clock.totalTime - timeElapsed;
-    const progressBarWidth = `${(clock.totalTime - currentTimeRemaining) / clock.totalTime * 100}%`;
-    progressBar.style.width = progressBarWidth;
-  }
+
   function decreaseMinute() {
     clock.minutes--;
     clock.seconds = 59;
@@ -65,10 +60,7 @@ function start(clock) {
     }
     console.log(showClock(clock));
     if (timerIsUp(clock)) {
-      clearInterval(clockUpdateInterval);
-      progressBar.style.width = '0px';
-      clearInterval(progressBarUpdateInterval);
-      timeElapsed = 0;
+      resetProgressBar();
       if (clock.type === 'focus') {
         updateSessions(++sessions);
         return;
@@ -78,52 +70,94 @@ function start(clock) {
   }
 }
 
-function startPomodoro() {
-  state = 'running';
-  start(clock);
+function resetClock(minutes, type) {
+  clock.minutes = minutes;
+  clock.seconds = 0;
+  clock.type = type;
+  time = minutes;
+  clock.totalTime = minutes * 60 * 1000;
+  timeElapsed = 0;
+}
 
+function toggleFocusSelection() {
+  modeButtons.forEach(button => {
+    if (button.getAttribute('disabled')) {
+      button.removeAttribute('disabled');
+    } else {
+      button.setAttribute('disabled', 'true');
+    }
+  });
+}
+function startPomodoro() {
+  running = true;
+  start();
+  toggleFocusSelection();
+}
+
+function pausePomodoro() {
+  clearIntervals();
+  running = false;
+}
+
+function stopPomodoro() {
+  clearIntervals();
+  resetClock(1, 'focus');
+  toggleFocusSelection();
+  running = false;
 }
 
 function startBreak() {
-  const clock = {
-    minutes: 5,
-    separator: ':',
-    seconds: 0,
-    type: 'break'
-  }
-  time = clock.minutes;
-  totalTime = clock.minutes * 60 * 1000;
-  timeElapsed = 0;
-  start(clock);
+  resetClock(5, 'break');
+  start();
 }
 
 function startLongBreak() {
-  const clock = {
-    minutes: 15,
-    separator: ':',
-    seconds: 0,
-    type: 'break'
-  }
-  clock.minutes = 15;
-  clock.seconds = 0;
-  type = 'break';
-  time = clock.minutes;
-  totalTime = clock.minutes * 60 * 1000;
-  timeElapsed = 0;
-  start(clock);
+  resetClock(15, 'break');
+  start();
 }
+const modes = {
+  short: {
+    focus: 25,
+    break: 5,
+    longBreak: 15
+  },
+  long: {
+    focus: 50,
+    break: 10,
+    longBreak: 15
+  }
+};
 
-
+function getMode(event) {
+  return event.target.getAttribute('data-duration') === '25' ?
+    modes.short :
+    modes.long;
+}
 const clocks = [...document.querySelectorAll('.clock')];
 const controls = document.querySelector('.controls');
 const session = document.querySelector('.sessions p');
 const progressBar = document.querySelector('.progress-bar');
-let clockUpdateInterval = null;
-let state = null;
-let sessions = 3;
+const timeSelections = document.querySelector('.focus-time-selection');
+const modeButtons = [...timeSelections.children];
+timeSelections.firstElementChild.classList.add('selected-mode');
+timeSelections.addEventListener('click', event => {
+  if (event.target.nodeName === 'BUTTON') {
+    modeButtons.forEach(button => {
+      mode = getMode(event);
+      button.classList.add('selected-mode');
+      if (button !== event.target) {
+        button.classList.remove('selected-mode');
+      }
+    });
+  }
+  console.log(mode);
+});
+let mode = null;
+let running = false;
+let sessions = session.textContent;
 let time = 1;
 let timeElapsed = 0;
-
+const refreshRate = 100;
 const clock = {
   minutes: time,
   separator: ':',
@@ -131,10 +165,9 @@ const clock = {
   type: 'focus',
   totalTime: time * 60 * 1000
 };
-
 controls.addEventListener('click', event => {
   if (event.target.className === 'start') {
-    if (state !== 'running') {
+    if (!running) {
       startPomodoro();
     }
   } else if (event.target.className === 'pause') {
