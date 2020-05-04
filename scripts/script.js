@@ -32,17 +32,27 @@ function clearIntervals() {
 
 function resetProgressBar() {
   clearInterval(clockUpdateInterval);
-  progressBar.style.transitionDuration = '1s';
+  clearInterval(progressBarUpdateInterval);
+  progressBar.style.transition = '1s';
   progressBar.style.width = '0px';
+  transitionDuration = 1;
 }
 
-let newTimeElapsed = 0;
+let transitionDuration = 1;
 function updateProgressBar() {
   timeElapsed += refreshRate;
   const difference = clock.totalTime - (clock.minutes * 60 * 1000 + clock.seconds * 1000);
   // Update the progress bar if tab becomes inactive
   if (timeElapsed < difference) timeElapsed = difference;
-
+  if (progressBar.style.transition &&
+    timeElapsed > clock.totalTime * 0.1 && transitionDuration > 0) {
+    console.log('in');
+    transitionDuration -= 0.01;
+    if (transitionDuration < 0.01) {
+      transitionDuration = 0;
+    }
+    progressBar.style.transition = `${transitionDuration}s`;
+  }
   const progressBarWidth = `${timeElapsed / (clock.totalTime) * 100}`;
   progressBar.style.width = progressBarWidth + '%';
 }
@@ -76,8 +86,8 @@ function start() {
 
 function resetClock(minutes, type) {
   modeTag.textContent = type === 'focus' ?
-  'Stop looking at me and focus!' :
-  'Good job! Take a break';
+    'Stop looking at me and focus!' :
+    'Good job! Take a break';
   clock.minutes = minutes;
   clock.seconds = 0;
   clock.type = type;
@@ -141,7 +151,7 @@ function startLongBreak() {
 
 const modes = {
   short: {
-    focus: 25,
+    focus: 1,
     break: 5,
     longBreak: 15
   },
