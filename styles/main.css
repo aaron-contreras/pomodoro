@@ -1,9 +1,9 @@
 :root {
   --main-background: #1A1423;
-  --main-highlight: #EB5160;
-  --main-highlight-darker: rgb(204, 70, 84);
-  --secondary-highlight: #99EDCC;
-  --secondary-highlight-darker: rgb(138, 214, 184);
+  --main-highlight: #99EDCC;
+  --main-highlight-darker: rgb(138, 214, 184);
+  --secondary-highlight: #EB5160;
+  --secondary-highlight-darker: rgb(204, 70, 84);
   --secondary-background: #364156;
   --secondary-background-darker: #2a3344;
 }
@@ -23,11 +23,14 @@ body {
 a {
   text-decoration: none;
   color: var(--secondary-background);
+  transition: 0.1s;
 }
 
 a:hover {
-  color: white;
+  color: var(--main-background);
+  font-size: 1.05em;
 }
+
 header {
   position: relative;
 }
@@ -42,7 +45,7 @@ h1 {
   /* background-color: var(--secondary-highlight); */
   background-color: var(--main-highlight);
   color: var(--secondary-background);
-  color: white;
+  /* color: white; */
 }
 h1, h2 {
   margin: 0;
@@ -122,7 +125,7 @@ button:hover {
 
 .selected-mode {
   color: var(--secondary-background);
-  color: white;
+  /* color: white; */
   background-color: var(--main-highlight);
 }
 
