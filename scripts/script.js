@@ -39,13 +39,10 @@ function resetProgressBar() {
 let newTimeElapsed = 0;
 function updateProgressBar() {
   timeElapsed += refreshRate;
-  console.log(timeElapsed);
   const difference = clock.totalTime - (clock.minutes * 60 * 1000 + clock.seconds * 1000);
-  console.log('diff: ' + difference);
   // Update the progress bar if tab becomes inactive
-  if (timeElapsed < difference) {
-    timeElapsed = difference;
-  }
+  if (timeElapsed < difference) timeElapsed = difference;
+
   const progressBarWidth = `${timeElapsed / (clock.totalTime) * 100}`;
   progressBar.style.width = progressBarWidth + '%';
 }
@@ -78,6 +75,9 @@ function start() {
 }
 
 function resetClock(minutes, type) {
+  modeTag.textContent = type === 'focus' ?
+  'Stop looking at me and focus!' :
+  'Good job! Take a break';
   clock.minutes = minutes;
   clock.seconds = 0;
   clock.type = type;
@@ -141,8 +141,8 @@ function startLongBreak() {
 
 const modes = {
   short: {
-    focus: 1,
-    break: 1,
+    focus: 25,
+    break: 5,
     longBreak: 15
   },
   long: {
@@ -164,6 +164,7 @@ const progressBar = document.querySelector('.progress-bar');
 const timeSelections = document.querySelector('.focus-time-selection');
 const modeButtons = [...timeSelections.children];
 const shotclock = document.querySelector('audio');
+const modeTag = document.querySelector('.timer p');
 timeSelections.firstElementChild.classList.add('selected-mode');
 timeSelections.addEventListener('click', event => {
   if (event.target.nodeName === 'BUTTON') {
@@ -183,7 +184,6 @@ timeSelections.addEventListener('click', event => {
 const settings = ['Focus', 'Break', 'Long break'];
 function updatePomodoroSettings() {
   let index = 0;
-
   for (let key in mode) {
     pomodoroSettings[index].textContent = (
       `${settings[index]}: ${mode[key]} min`
@@ -199,7 +199,6 @@ let mode = modes.short;
 updatePomodoroSettings();
 let running = false;
 let sessions = 0;
-console.log(sessions);
 let time = 1;
 let timeElapsed = 0;
 const refreshRate = 100;
@@ -210,7 +209,7 @@ const clock = {
   type: 'focus',
   totalTime: null
 };
-resetClock(1, 'focus');
+resetClock(mode.focus, 'focus');
 controls.addEventListener('click', event => {
   console.log(event);
   if (event.target.className.includes('play')) {
